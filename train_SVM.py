@@ -159,8 +159,11 @@ def main(multi_mode='ovo', winL=90, winR=90, do_preprocess=True, use_weight_clas
     print("Runing train_SVM.py!")
 
     #db_path = '/home/mondejar/dataset/ECG/mitdb/m_learning/scikit/'
-    db_path = '/home/kacper/github/database/mitdb/m_learning/scikit/'
-    # Load train data 
+    # db_path = '/home/kacper/github/database/mitdb/m_learning/scikit/'
+    db_path = os.getcwd() + '/database/mitdb/m_learning/scikit/'
+    # Load train data
+    if not os.path.exists(db_path):
+        os.makedirs(db_path)
     [tr_features, tr_labels, tr_patient_num_beats] = load_mit_db('DS1', winL, winR, do_preprocess,
         maxRR, use_RR, norm_RR, compute_morph, db_path, reduced_DS, leads_flag)
 
@@ -289,6 +292,9 @@ def main(multi_mode='ovo', winL=90, winR=90, do_preprocess=True, use_weight_clas
 
         model_svm_path = db_path + 'svm_models/' + multi_mode + '_rbf'
 
+        if not os.path.exists(db_path + 'svm_models/'):
+            os.makedirs(db_path + 'svm_models/')
+
         model_svm_path = create_svm_model_name(model_svm_path, winL, winR, do_preprocess,
             maxRR, use_RR, norm_RR, compute_morph, use_weight_class, feature_selection,
             oversamp_method, leads_flag, reduced_DS, pca_k, '_')
@@ -347,8 +353,13 @@ def main(multi_mode='ovo', winL=90, winR=90, do_preprocess=True, use_weight_clas
         ############################################################################################################
 
         # Evaluate the model on the training data
-        perf_measures_path = create_svm_model_name('/home/kacper/ecg_classification/python/results/' + multi_mode, winL, winR, do_preprocess,
+        # perf_measures_path = create_svm_model_name('/home/kacper/ecg_classification/python/results/' + multi_mode, winL, winR, do_preprocess,
+        #     maxRR, use_RR, norm_RR, compute_morph, use_weight_class, feature_selection, oversamp_method, leads_flag, reduced_DS, pca_k, '/')
+
+        perf_measures_path = create_svm_model_name(os.getcwd() + '/results/' + multi_mode, winL, winR, do_preprocess,
             maxRR, use_RR, norm_RR, compute_morph, use_weight_class, feature_selection, oversamp_method, leads_flag, reduced_DS, pca_k, '/')
+
+
 
         # ovo_voting:
         # Simply add 1 to the win class

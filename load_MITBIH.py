@@ -34,7 +34,10 @@ from numpy.polynomial.hermite import hermfit, hermval
 
 def create_features_labels_name(DS, winL, winR, do_preprocess, maxRR, use_RR, norm_RR, compute_morph, db_path, reduced_DS, leads_flag):
     
-    features_labels_name = db_path + 'features/' + 'w_' + str(winL) + '_' + str(winR) + '_' + DS 
+    features_labels_name = db_path + 'features/' + 'w_' + str(winL) + '_' + str(winR) + '_' + DS
+
+    if not os.path.exists(db_path + 'features/'):
+        os.makedirs(db_path + 'features/')
 
     if do_preprocess:
         features_labels_name += '_rm_bsline'
@@ -143,6 +146,8 @@ def load_mit_db(DS, winL, winR, do_preprocess, maxRR, use_RR, norm_RR, compute_m
                 my_db = load_signal(DS2, winL, winR, do_preprocess)
 
             print("Saving signal processed data ...")
+            if not os.path.exists(db_path):
+                os.makedirs(db_path)
             # Save data
             # Protocol version 0 itr_features_balanceds the original ASCII protocol and is backwards compatible with earlier versions of Python.
             # Protocol version 1 is the old binary format which is also compatible with earlier versions of Python.
