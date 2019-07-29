@@ -99,9 +99,9 @@ def load_mit_db(DS, winL, winR, do_preprocess, maxRR, use_RR, norm_RR, compute_m
         gc.disable()# this improve the required loading time!
         features, labels, patient_num_beats = pickle.load(f)
 
-        print(features)
-        print(labels)
-        print(patient_num_beats)
+        #print(features)
+        #print(labels)
+        #print(patient_num_beats)
         gc.enable()
         f.close()
 
@@ -506,8 +506,8 @@ def load_signal(DS, winL, winR, do_preprocess):
     r_index = 0
 
     #for r, a in zip(fRecords, fAnnotations):
-    print(fRecords)
-    print(fAnnotations)
+    #print(fRecords)
+    #print(fAnnotations)
     for r in range(0, len(fRecords)):
 
         print("Processing signal " + str(r) + " / " + str(len(fRecords)) + "...")
@@ -569,7 +569,6 @@ def load_signal(DS, winL, winR, do_preprocess):
 
 
         # Extract the R-peaks from annotations
-        #TODO poniżej jest fuckup classID i beat
         for a in annotations:
             aS = a.split()
             
@@ -587,7 +586,6 @@ def load_signal(DS, winL, winR, do_preprocess):
                 if(pos > winL and pos < (len(MLII) - winR)):
                     beat[r].append( (MLII[pos - winL : pos + winR], V1[pos - winL : pos + winR]))
                     for i in range(0,len(AAMI_classes)):
-                        #TODO fuckup, w class_ID same zera
                         if classAnttd in AAMI_classes[i]:
                             class_AAMI = i
                             break #exit loop

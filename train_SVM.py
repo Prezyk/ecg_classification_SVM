@@ -185,23 +185,22 @@ def main(multi_mode='ovo', winL=90, winR=90, do_preprocess=True, use_weight_clas
     # before oversamp!!?????
 
     # TODO perform normalization before the oversampling?
-    #TODO tu może być fuckup, jak coś się zjebało z perform_oversampling może czyścić tr_features (?)
     if oversamp_method:
-        print("OVERSAMPLING...")
-        print(tr_features)
+        #print("OVERSAMPLING...")
+        #print(tr_features)
 
         # Filename
         oversamp_features_pickle_name = create_oversamp_name(reduced_DS, do_preprocess, compute_morph, winL, winR, maxRR, use_RR, norm_RR, pca_k)
 
         # Do oversampling
         tr_features, tr_labels = perform_oversampling(oversamp_method, db_path + 'oversamp/python_mit', oversamp_features_pickle_name, tr_features, tr_labels)
-        print(tr_features)
+        #print(tr_features)
     # Normalization of the input data
     # scaled: zero mean unit variance ( z-score )
     scaler = StandardScaler()
-    print(tr_features)
-    print(tr_labels)
-    print(tr_patient_num_beats)
+    #print(tr_features)
+    #print(tr_labels)
+    #print(tr_patient_num_beats)
     scaler.fit(tr_features)
     tr_features_scaled = scaler.transform(tr_features)
 

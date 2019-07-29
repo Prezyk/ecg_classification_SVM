@@ -61,7 +61,7 @@ for i in range(5):
         elif j == 4:
             temp_conf[1] = True
             temp_conf[2] = True
-        conf.append(temp_conf.copy())
+        conf_list.append(temp_conf.copy())
 
 
 for conf in conf_list:

@@ -81,15 +81,16 @@ def main():
 
     oversamp = '' #'', 'SMOTEENN/', 'SMOTE/', 'SMOTETomek/', 'ADASYN/'
     # Load gt labelso
-    eval_labels = np.loadtxt('/home/mondejar/Dropbox/ECG/code/ecg_classification/python/mit_db/' + DS + '_labels.csv') 
-
+    # eval_labels = np.loadtxt('/home/mondejar/Dropbox/ECG/code/ecg_classification/python/mit_db/' + DS + '_labels.csv')
+    eval_labels = np.loadtxt(os.getcwd() + '/mit_db/' + DS + "_labels.csv")
     # Configuration
-    results_path = '/home/mondejar/Dropbox/ECG/code/ecg_classification/python/results/ovo/MLII/'
+    # results_path = '/home/mondejar/Dropbox/ECG/code/ecg_classification/python/results/ovo/MLII/'
+    results_path = os.getcwd() + '/results/ovo/MLII/'
 
     if DS == 'DS2':     
         model_RR            = results_path + oversamp + 'rm_bsln/' + 'maxRR/' + 'RR/' + 'norm_RR/'   + 'weighted/' + 'C_0.001' + '_decision_ovo.csv'
         model_wvl           = results_path + oversamp + 'rm_bsln/' + 'maxRR/' + 'wvlt/'              + 'weighted/' + 'C_0.001' + '_decision_ovo.csv'       
-        model_LBP           = results_path + oversamp + 'rm_bsln/' + 'maxRR/' + 'lbp/'               + 'weighted/' + 'C_0.001' + '_decision_ovo.csv' 
+        model_LBP           = results_path + oversamp + 'rm_bsln/' + 'maxRR/' + 'u-lbp/'               + 'weighted/' + 'C_0.001' + '_decision_ovo.csv'
         model_HOS           = results_path + oversamp + 'rm_bsln/' + 'maxRR/' + 'HOS/'               + 'weighted/' + 'C_0.001' + '_decision_ovo.csv'
         model_myDesc        = results_path + oversamp + 'rm_bsln/' + 'maxRR/' + 'myMorph/'           + 'weighted/' + 'C_0.001' + '_decision_ovo.csv'
 
@@ -102,7 +103,7 @@ def main():
     prob_ovo_MyDescp    = np.loadtxt(model_myDesc)
 
 
-    prob_ovo_HBF    = np.loadtxt(model_HBF)
+    # prob_ovo_HBF    = np.loadtxt(model_HBF)
    
     predict, prob_ovo_RR_sig      = ovo_voting_exp(prob_ovo_RR, 4) #voting_ovo_w(prob_ovo_RR)           #voting_ovo_raw(prob_ovo_RR)
     predict, prob_ovo_wvl_sig     = ovo_voting_exp(prob_ovo_wvl, 4) #voting_ovo_w(prob_ovo_wvl)          #voting_ovo_raw(prob_ovo_wvl)
@@ -110,7 +111,7 @@ def main():
     predict, prob_ovo_HOS_sig     = ovo_voting_exp(prob_ovo_HOS, 4) #voting_ovo_w(prob_ovo_HOS_myDesc)   #voting_ovo_raw(prob_ovo_HOS_myDesc)
     predict, prob_ovo_MyDescp_sig = ovo_voting_exp(prob_ovo_MyDescp, 4) #voting_ovo_w(prob_ovo_HOS_myDesc)   #voting_ovo_raw(prob_ovo_HOS_myDesc)
 
-    predict, prob_ovo_HBF_sig = ovo_voting_exp(prob_ovo_HBF, 4) 
+    # predict, prob_ovo_HBF_sig = ovo_voting_exp(prob_ovo_HBF, 4)
 
     ##########################################################
     # Combine the predictions!
@@ -124,7 +125,7 @@ def main():
     #probs_ensemble = np.stack((prob_ovo_wvl_sig, prob_ovo_HOS_sig))
     #probs_ensemble = np.stack((prob_ovo_wvl_sig, prob_ovo_LBP_sig))
     #probs_ensemble = np.stack((prob_ovo_wvl_sig, prob_ovo_MyDescp_sig))
-    
+
     #probs_ensemble = np.stack((prob_ovo_HOS_sig, prob_ovo_LBP_sig))
     #probs_ensemble = np.stack((prob_ovo_HOS_sig, prob_ovo_MyDescp_sig))
 
@@ -145,13 +146,13 @@ def main():
 
     # 4
     #probs_ensemble = np.stack((prob_ovo_RR_sig, prob_ovo_wvl_sig, prob_ovo_HOS_sig, prob_ovo_LBP_sig))
-    #probs_ensemble = np.stack((prob_ovo_RR_sig, prob_ovo_wvl_sig, prob_ovo_HOS_sig, prob_ovo_MyDescp_sig))
+    probs_ensemble = np.stack((prob_ovo_RR_sig, prob_ovo_wvl_sig, prob_ovo_HOS_sig, prob_ovo_MyDescp_sig))
     #probs_ensemble = np.stack((prob_ovo_RR_sig, prob_ovo_wvl_sig, prob_ovo_LBP_sig, prob_ovo_MyDescp_sig))
     #probs_ensemble = np.stack((prob_ovo_RR_sig, prob_ovo_HOS_sig, prob_ovo_LBP_sig, prob_ovo_MyDescp_sig))
     #probs_ensemble = np.stack((prob_ovo_wvl_sig, prob_ovo_HOS_sig, prob_ovo_LBP_sig, prob_ovo_MyDescp_sig))
 
     # 5
-    probs_ensemble = np.stack((prob_ovo_RR_sig, prob_ovo_wvl_sig, prob_ovo_HOS_sig, prob_ovo_LBP_sig, prob_ovo_MyDescp_sig))
+    # probs_ensemble = np.stack((prob_ovo_RR_sig, prob_ovo_wvl_sig, prob_ovo_HOS_sig, prob_ovo_LBP_sig, prob_ovo_MyDescp_sig))
 
     n_ensembles, n_instances, n_classes = probs_ensemble.shape
     
@@ -159,35 +160,36 @@ def main():
     # product rule!
     predictions_prob_rule = basic_rules(probs_ensemble, 0)
     perf_measures = compute_AAMI_performance_measures(predictions_prob_rule.astype(int), eval_labels)
+    os.makedirs(results_path + 'fusion/prod_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')))
     write_AAMI_results( perf_measures, results_path + 'fusion/prod_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')) + '_' + DS +  '.txt')
         
     ###########################################
     # Sum rule!
-    """
-    predictions_sum_rule = basic_rules(probs_ensemble, 1)
-    perf_measures = compute_AAMI_performance_measures(predictions_sum_rule.astype(int), eval_labels)
-    write_AAMI_results( perf_measures, results_path + 'fusion/sum_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')) + '_' + DS +  '.txt')
-    """
+
+    # predictions_sum_rule = basic_rules(probs_ensemble, 1)
+    # perf_measures = compute_AAMI_performance_measures(predictions_sum_rule.astype(int), eval_labels)
+    # write_AAMI_results( perf_measures, results_path + 'fusion/sum_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')) + '_' + DS +  '.txt')
+
     # min rule!
-    """
-    predictions_min_rule = basic_rules(probs_ensemble, 2)
-    perf_measures = compute_AAMI_performance_measures(predictions_min_rule.astype(int), eval_labels)
-    write_AAMI_results( perf_measures, results_path + 'fusion/min_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')) + '_' + DS + '.txt')
-    """
+
+    # predictions_min_rule = basic_rules(probs_ensemble, 2)
+    # perf_measures = compute_AAMI_performance_measures(predictions_min_rule.astype(int), eval_labels)
+    # write_AAMI_results( perf_measures, results_path + 'fusion/min_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')) + '_' + DS + '.txt')
+
     
     # max rule!
-    """
-    predictions_max_rule = basic_rules(probs_ensemble, 3)
-    perf_measures = compute_AAMI_performance_measures(predictions_max_rule.astype(int), eval_labels)
-    write_AAMI_results( perf_measures, results_path + 'fusion/max_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')) + '_' + DS + '.txt')
-    """
+
+    # predictions_max_rule = basic_rules(probs_ensemble, 3)
+    # perf_measures = compute_AAMI_performance_measures(predictions_max_rule.astype(int), eval_labels)
+    # write_AAMI_results( perf_measures, results_path + 'fusion/max_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')) + '_' + DS + '.txt')
+
 
     # Mayority rule / Ranking
-    """
-    predictions_rank_rule = basic_rules(probs_ensemble, 4)
-    perf_measures = compute_AAMI_performance_measures(predictions_rank_rule.astype(int), eval_labels)
-    write_AAMI_results( perf_measures, results_path + 'fusion/rank_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')) + '_' + DS + '.txt')
-    """
+
+    # predictions_rank_rule = basic_rules(probs_ensemble, 4)
+    # perf_measures = compute_AAMI_performance_measures(predictions_rank_rule.astype(int), eval_labels)
+    # write_AAMI_results( perf_measures, results_path + 'fusion/rank_rule_score_Ijk_' + str(format(perf_measures.Ijk, '.2f')) + '_' + DS + '.txt')
+
 
 if __name__ == '__main__':
 
