@@ -1,4 +1,6 @@
 # ecg_classification_SVM
+Original code: https://github.com/mondejar/ecg-classification
+
 Uruchomienie convret_wfdb_data_2_csv.py - pobranie i konwersja plików, utworzenie katalogu database w folderze roboczym,
 tam wszystko zostanie zapisane
 
